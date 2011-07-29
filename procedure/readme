@@ -1,0 +1,1 @@
+VHDL procedures are _not_ widely used in the analyzed VHDL designs. Nevertheless I put here one example as this construct doesn't seem to be dead and should be finally supported.
