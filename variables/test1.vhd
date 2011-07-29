@@ -18,7 +18,7 @@ begin
     L: process(input)
         variable tmp : std_logic_vector(15 downto 0);
     begin
-        outpu <= tmp; --this shouln't really change anything
+        output <= tmp; --this shouln't really change anything
         tmp := input;
         tmp := tmp and "1010101010101010";
         output <= tmp;
