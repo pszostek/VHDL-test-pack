@@ -24,7 +24,7 @@ BEGIN
   sel(0) <= s0;
   sel(1) <= s1;
 
-mux:PROCESS(s0, s1, in0, in1, in2, in3)
+mux:PROCESS(sel, in0, in1, in2, in3)
 BEGIN
   CASE sel IS --use signal as select criterion
     WHEN  "00"  =>  output <= in0;

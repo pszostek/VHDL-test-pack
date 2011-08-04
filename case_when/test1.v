@@ -3,37 +3,37 @@
 // Date: 01.08.2011
 
 module  mux4to1 ( input s0, s1, in0, in1, in2, in3, output reg out );
-  reg [1:0] sel;
+  wire [1:0] sel;
   assign sel[1:0] = {s1, s0};
 
   always @ (s0 or s1 or in0 or in1 or in2 or in3)
   begin
     case (sel)
-      2'b00:   out <= in0;
-      2'b01:   out <= in1;
-      2'b10:   out <= in2;
-      2'b11:   out <= in3;
-      default: out <= 1'bx;
+      2'b00:   out = in0;
+      2'b01:   out = in1;
+      2'b10:   out = in2;
+      2'b11:   out = in3;
+      default: out = 1'bx;
     endcase
   end
 
 endmodule
 
 module stimulus (output reg s1, s0, o0, o1, o2, o3);
-    parameter S = 20000;
+    parameter S = 2000;
     reg unsigned [3:0] temp1, temp2, temp3;
     int unsigned i;
     initial begin
         for (i=0; i<S; i=i+1) begin
-            #1 temp1[3:0] = $random % 16;
-            temp2[3:0] = $random % 16;
-            temp3[3:0] = $random %16;
-            s1 = inject(temp1);
-            s0 = inject(temp2);
-            o0 = inject(temp3);
-            o1 = inject({temp1[3:2],temp2[1:0]});
-            o2 = inject({temp3[3:2],temp1[1:0]});
-            o3 = inject({temp3[3:2],temp2[1:0]});
+         #1 temp1[3:0] <= $random % 16;
+            temp2[3:0] <= $random % 16;
+            temp3[3:0] <= $random %16;
+            s1 <= inject(temp1);
+            s0 <= inject(temp2);
+            o0 <= inject(temp3);
+            o1 <= inject({temp1[3:2],temp2[1:0]});
+            o2 <= inject({temp3[3:2],temp1[1:0]});
+            o3 <= inject({temp3[3:2],temp2[1:0]});
         end
     end
     function inject(input unsigned[3:0] value);
@@ -52,16 +52,24 @@ module stimulus (output reg s1, s0, o0, o1, o2, o3);
     endfunction
 endmodule
         
-module check(input a,b,i0,i1,i2,i3, s0, s1);
+module check(input o_verilog, o_vhdl,i0,i1,i2,i3, s0, s1);
 
-always @(a,b) begin
-    #1;
-    if (a !== b) begin
+always @(s0,s1,i0,i1,i2,i3) begin
+    if (o_vhdl !== o_verilog) begin
         $display("ERROR!");
-        $display("INPUTS: ", i0,i1,i2,i3);
-        $display("OUTPUTS: ", a,b);
-        $display("SEL: ", s0, s1);
-        $finish;
+        $display("INPUTS: ", i3,i2,i1,i0);
+        $display("VHDL_OUTPUT: ", o_vhdl);
+        $display("VERILOG_OUTPUT: ", o_verilog);
+        $display("SEL: ", s1, s0);
+        $display("");
+        //$finish;
+    end else begin
+        $display("OK!");
+        $display("INPUTS: ", i3,i2,i1,i0);
+        $display("VHDL_OUTPUT: ", o_vhdl);
+        $display("VERILOG_OUTPUT: ", o_verilog);
+        $display("SEL: ", s1, s0);
+        $display("");
     end
 end
 endmodule
