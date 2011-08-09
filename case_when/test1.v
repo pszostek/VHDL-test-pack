@@ -25,9 +25,10 @@ module stimulus (output reg s1, s0, o0, o1, o2, o3);
     int unsigned i;
     initial begin
         for (i=0; i<S; i=i+1) begin
-         #1 temp1[3:0] <= $random % 16;
-            temp2[3:0] <= $random % 16;
-            temp3[3:0] <= $random %16;
+            #1;
+            temp1[3:0] = $random % 16;
+            temp2[3:0] = $random % 16;
+            temp3[3:0] = $random %16;
             s1 <= inject(temp1);
             s0 <= inject(temp2);
             o0 <= inject(temp3);
@@ -83,7 +84,7 @@ module main;
     check check(o_verilog, o_vhdl,i0,i1,i2,i3, s0, s1);
     initial begin
         #120000;
-        $display("PASSED");
+        //$display("PASSED");
         $finish;
     end
 endmodule
