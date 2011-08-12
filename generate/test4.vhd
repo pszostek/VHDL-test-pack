@@ -17,7 +17,7 @@ architecture test of flip_flop is
     signal q_internal : std_logic;
 begin
     q <= q_internal;
-    gen: if sync generate --usage of if-generate statements
+    synchronous: if sync generate --usage of if-generate statements
         p: process(clk) begin
             if(rising_edge(clk) and rst = '1') then
                 q_internal <= '0';
@@ -26,7 +26,7 @@ begin
             end if;
         end process;
     end generate;
-    not_gen: if not sync generate
+    asynchronous: if not sync generate
         p: process(clk, rst) begin
             if(rst = '1') then
                 q_internal <= '0';

@@ -4,7 +4,7 @@
 
 `timescale 1ns/1ps
 
-module  mux4to1 ( input s0, s1, in0, in1, in2, in3, output reg out );
+module  mux4to1_vl ( input s0, s1, in0, in1, in2, in3, output reg out );
   wire [1:0] sel;
   assign sel[1:0] = {s1, s0};
 

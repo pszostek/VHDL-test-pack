@@ -2,23 +2,33 @@
 // Author: Pawel Szostek (pawel.szostek@cern.ch)
 // Date: 01.08.2011
 `timescale 1ns/1ps
-module  counter_vl ( input ena, clk, reset, output reg[7:0]count );
-
-  always @ (posedge clk or posedge reset)
-  begin
-    if(reset == 1'b1)
-      count <= 0;
-    else if(ena == 1'b1)
-        count <= count +1;
-    else if(ena == 1'b0)
-        count <= count;
-    else
-        count <= 8'bxxxxxxxx;
-  end
-
+module  flip_flop_vl ( input d, clk, reset, output reg q );
+  parameter SYNC = 1;
+  generate
+  if (SYNC == 0)
+      begin : asynchronous
+        always @(posedge clk or posedge reset)
+        begin
+            if(reset == 1)
+                q <= 1'b0;
+            else 
+                q <= d;
+        end
+      end
+  else
+      begin : synchronous
+        always @(posedge clk)
+        begin
+            if(reset == 1)
+                q <= 1'b0;
+            else
+                q <= d;
+        end
+      end
+  endgenerate
 endmodule
 
-module stimulus (output reg ena, clk, reset);
+module stimulus (output reg d, clk, reset);
     parameter S = 20000;
     reg unsigned [3:0] temp1, temp3;
     int unsigned i,j,k;
@@ -27,22 +37,22 @@ module stimulus (output reg ena, clk, reset);
         #1;
         reset <= 1'b0;
     end
-    initial begin //stimulate enable input
+    initial begin //stimulate data 
         for (i=0; i<S/3; i=i+1) begin
-         #3 ena <= inject();
+         #5 d <= inject();
         end
     end
 
     initial begin //stimulate clock
         clk = 0;
         for(j=0; j<S; j=j+1) begin
-            #1 clk = ~clk;
+            #3 clk = ~clk;
         end
     end
 
     initial begin //stimulate reset
         for (k=0; k<S/101; k=k+1) begin
-            #101 reset <= inject();
+            #11 reset <= inject();
         end
     end
 
@@ -54,25 +64,18 @@ module stimulus (output reg ena, clk, reset);
                 inject = 1'b1;
             else
                 inject = 1'b0;
-            /*else if(temp >= 4)
-                inject = 1'b0;
-            else if(temp >= 2)
-                inject = 1'bx;
-            else
-                inject = 1'b1;
-        */end
+        end
     endfunction
 endmodule
 
-module check(input [7:0] verilog, [7:0] vhdl, input ena, clk, reset);
+module check(input vhdl, verilog, clk, reset);
 
-always @(ena or clk or reset) begin
+always @(clk or reset) begin
     #1; //don't look at peaks
     if (vhdl !== verilog) begin
         $display("ERROR!");
-        $display("VERILOG_CNT: ", verilog);
-        $display("VHDL_CNT: ", vhdl);
-        $display("ENA: ", ena);
+        $display("VERILOG: ", verilog);
+        $display("VHDL: ", vhdl);
         $display("CLK: ", clk);
         $display("RST: ", reset);
         $display("");
@@ -90,14 +93,17 @@ end
 endmodule
 
 module main;
-    wire[7:0] vhdl;
-    wire[7:0] verilog;
-    wire ena, clk, reset;
+    wire d, clk, reset;
+    wire sync_vhdl, sync_vl, async_vhdl, async_vl;
+    stimulus stim(d, clk, reset);
+    flip_flop #(1) ff_sync_vhdl(d, clk, reset, sync_vhdl);
+    flip_flop #(0) ff_async_vhdl(d, clk, reset, async_vhdl);
+    flip_flop_vl #(1) ff_sync_vl(d, clk, reset, sync_vl);
+    flip_flop_vl #(0) ff_async_vl(d, clk, reset, async_vl);
+    
+    check check_sync(sync_vhdl, sync_vl, clk, reset);
+    check check_async(async_vhdl, async_vl, clk, reset);
 
-    stimulus stim(ena, clk, reset);
-    counter_vhdl cnt_vhdl(ena, clk, reset, vhdl);
-    counter_vl cnt_vl(ena, clk, reset, verilog);
-    check check(verilog, vhdl, ena, clk, reset);
     initial begin
         #120000;
         $display("PASSED");

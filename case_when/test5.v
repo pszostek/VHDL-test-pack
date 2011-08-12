@@ -4,31 +4,31 @@
 
 `timescale 1ns/1ps
 
-module  mux4to1 ( input s0, s1, in0, in1, in2, in3, output reg out );
-  wire [1:0] sel;
-  assign sel[1:0] = {s1, s0};
-
-  always @ (s0 or s1 or in0 or in1 or in2 or in3)
+module  mux4to2_vl ( input s0, in0, in1, in2, in3, output reg out0, out1);
+  always @ (s0 or in0 or in1 or in2 or in3)
   begin
-    case (sel)
-      2'b00:   out = in0;
-      2'b01:   out = in1;
-      2'b10:   out = in2;
-      2'b11:   out = in3;
-      default: out = 1'bx;
+    case (s0)
+      1'b0:begin
+              out0 <= in0;
+              out1 <= in1;
+           end
+      1'b1:begin
+              out0 <= in2;
+              out1 <= in3;
+           end
+      default: {out0, out1} = 2'bxx;
     endcase
   end
 
 endmodule
 
-module stimulus (output reg s1, s0, o0, o1, o2, o3);
+module stimulus (output reg s0, o0, o1, o2, o3);
     parameter S = 2000;
     int unsigned i;
     initial begin
         for (i=0; i<S; i=i+1) begin
             #10;
-            s1 <= inject();
-            s0 <= inject();
+            s0<= inject();
             o0 <= inject();
             o1 <= inject();
             o2 <= inject();
@@ -53,37 +53,38 @@ module stimulus (output reg s1, s0, o0, o1, o2, o3);
     endfunction
 endmodule
         
-module check(input o_verilog, o_vhdl,i0,i1,i2,i3, s0, s1);
+module check(input o_verilog, o_vhdl,i0,i1,i2,i3, s0);
 
-always @(s0,s1,i0,i1,i2,i3) begin
+always @(s0,i0,i1,i2,i3) begin
     #1;
     if (o_vhdl !== o_verilog) begin
         $display("ERROR!");
         $display("INPUTS: ", i3,i2,i1,i0);
         $display("VHDL_OUTPUT: ", o_vhdl);
         $display("VERILOG_OUTPUT: ", o_verilog);
-        $display("SEL: ", s1, s0);
+        $display("SEL: ", s0);
         $display("");
         $stop;
     end else begin
-   /*     $display("OK!");
-        $display("INPUTS: ", i3,i2,i1,i0);
+     /*   $display("INPUTS: ", i3,i2,i1,i0);
         $display("VHDL_OUTPUT: ", o_vhdl);
         $display("VERILOG_OUTPUT: ", o_verilog);
-        $display("SEL: ", s1, s0);
+        $display("SEL: ", s0);
         $display("");
-     */   
-    end
+    */end
 end
 endmodule
 
 module main;
-    wire s1, s0, i0, i1, i2, i3, o_verilog, o_vhdl;
+    wire s0;
+    wire [3:0] i;
+    wire [1:0] o_verilog;
+    wire [1:0] o_vhdl;
 
-    stimulus stim(.s1(s1), .s0(s0), .o0(i0), .o1(i1), .o2(i2), .o3(i3));
-    mux4to1 mux_verilog(s0, s1, i0, i1, i2, i3, o_verilog);
-    mux4to1_vhdl_1 mux_vhdl(s0, s1, i0, i1, i2, i3, o_vhdl);
-    check check(o_verilog, o_vhdl,i0,i1,i2,i3, s0, s1);
+    stimulus stim(.s0(s0), .o0(i[0]), .o1(i[1]), .o2(i[2]), .o3(i[3]));
+    mux4to2_vl mux_verilog(s0, i[0], i[1], i[2], i[3], o_verilog[0], o_verilog[1]);
+    mux4to2_vhdl_1 mux_vhdl(s0, i[0], i[1], i[2], i[3], o_vhdl[0], o_vhdl[1]);
+    check check(o_verilog, o_vhdl,i[0],i[1],i[2],i[3], s0);
     initial begin
         #120000;
         $display("PASSED");

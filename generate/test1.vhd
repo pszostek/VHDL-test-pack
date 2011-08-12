@@ -33,16 +33,16 @@ USE ieee.std_logic_1164.all;
 USE ieee.std_logic_unsigned.all;
 USE ieee.numeric_std.all;
 
-entity REG_BANK is
+entity reg_bank_vhdl is
     port (
        DIN : in std_ulogic_vector(3 downto 0);
-       DOUT : out std_ulogic_vector(3 downto 0);
+       CLK : in std_ulogic;
        RESET : in std_ulogic;
-       CLK : in std_ulogic
+       DOUT : out std_ulogic_vector(3 downto 0)
     );
 end;
 
-architecture GEN of REG_BANK is
+architecture GEN of reg_bank_vhdl is
   component REG
     port(D,CLK,RESET : in  std_ulogic;
          Q           : out std_ulogic);

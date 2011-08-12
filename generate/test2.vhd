@@ -21,4 +21,3 @@ begin
         output(i) <= input(7-i);
     end generate INVERT;
 end arch;
-    

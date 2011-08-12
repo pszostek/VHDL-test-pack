@@ -6,7 +6,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 USE ieee.std_logic_unsigned.all;
 
-ENTITY  mux4_2 IS
+ENTITY  mux4to2_vhdl_1 IS
    PORT (s0               : IN  STD_LOGIC;
          in0              : IN  STD_LOGIC;
          in1              : IN  STD_LOGIC;
@@ -15,9 +15,9 @@ ENTITY  mux4_2 IS
          out0             : OUT STD_LOGIC;
          out1             : OUT STD_LOGIC
         );
-END mux4_2;
+END mux4to2_vhdl_1;
 
-ARCHITECTURE case_example OF mux4_2 IS
+ARCHITECTURE case_example OF mux4to2_vhdl_1 IS
 
 BEGIN 
 
