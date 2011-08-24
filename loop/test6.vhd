@@ -1,31 +1,32 @@
 --
 -- Author: Pawel Szostek (pawel.szostek@cern.ch)
--- Date: 28.07.2011
+-- Date: 27.07.2011
 
 LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 USE ieee.numeric_std.all;
 
-entity decoder is
-    port (A : in integer range 0 to 4;
-          Z : out std_logic_vector(0 to 3)
-    );
+entity count_ones is
+    port (vec : in std_logic_vector(15 downto 0);
+        count : out unsigned(4 downto 0));
 end;
 
-use work.pkg.all;
-
-architecture behaviour of decoder is
+architecture behaviour of count_ones is
 begin
-    process (A)
-        variable I : integer range 0 to 4;
+    process(vec)
+        variable ones : unsigned(4 downto 0);
+        variable i : natural;
     begin
-        Z <= "0000";
-        I := 0;
-        while (I <= 3) loop --while loop
-            if (A = I) then
-                Z(I) <= '1';
+        ones := to_unsigned(0, 5);
+        i := 0;
+        while i < 16 loop
+            if vec(i) = '0' then
+                i := i+1;
+                next;
             end if;
-            I := I + 1;
+            ones := ones + 1;
+            i := i+1;
         end loop;
+        count <= ones;
     end process;
 end;

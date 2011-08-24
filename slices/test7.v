@@ -4,6 +4,10 @@
 
 `timescale 1ns/1ps
 
+module dummy_v( input [7:0] in, output reg [7:0] out);
+    assign out = {in[7], 7'b1111111}; //there is no equivalent to vhdl's `others'
+endmodule
+
 module stimulus (output reg [7:0] a);
     parameter S = 20000;
     int unsigned j,i;
@@ -39,16 +43,26 @@ module stimulus (output reg [7:0] a);
 endmodule
 module main;
     wire [7:0] i,o;
+    wire [7:0] veri;
     dummy dummy_vhdl(i,o);
-    stimulus stim(i)
-    
-    initial begin
-        #10;
-        if (o1 != 0 || o2 != 8'b00001000 || o3 != 8'b10000000)
+    dummy_v dummy_verilog(i, veri);
+    stimulus stim(i);
+
+
+    always @(i) begin
+    #1;
+        if(o != veri) begin
             $display("ERROR!");
+            $display("VERILOG: ", veri);
+            $display("VHDL: ", o);
+            $stop;
+        end
+    end
+    initial begin
+        #12000;
         #10;
             $display("PASSED");
-        $stop;
+        //stop;
     end
 endmodule
  

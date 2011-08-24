@@ -21,5 +21,5 @@ begin
                    "10" when "0100",
                    "11" when "1000",
                    "XX" when others;
-    err <= '1' when input /= "0001" and input /= "0010" and input /= "0100" and input /= "1000";
+    err <= '1' when input /= "0001" and input /= "0010" and input /= "0100" and input /= "1000" else '0';
 end;

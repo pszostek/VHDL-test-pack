@@ -7,8 +7,6 @@ USE ieee.std_logic_1164.all;
 USE ieee.std_logic_unsigned.all;
 USE ieee.numeric_std.all;
 
-use work.array_pkg.all;
-
 entity dummy is
     port (
         input : in std_logic_vector(7 downto 0);
@@ -22,7 +20,7 @@ begin
         variable tmp : std_logic_vector(7 downto 0);
     begin
        tmp := input;                            -- use multiple assignments to the same variable
-       tmp := (7 => input(7), others => '0');   -- inluding slices in a process
+       tmp := (7 => input(7), others => '1');   -- inluding slices in a process
        output <= tmp;
     end process;
 end;

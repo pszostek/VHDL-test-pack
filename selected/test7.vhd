@@ -7,7 +7,7 @@ USE ieee.std_logic_1164.all;
 USE ieee.std_logic_unsigned.all;
 
 entity equal is
-    port (d1, d2  : in std_logic_vector(2 downto 0);
+    port (d1, d2  : in std_logic_vector(15 downto 0);
           output : out std_logic
     );
 end;

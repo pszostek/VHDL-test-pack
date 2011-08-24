@@ -22,4 +22,4 @@ begin
                    d2 when "10" ,
                    d3 when "11",
                    'X' when others;
-end;o
+end;

@@ -6,7 +6,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 USE ieee.std_logic_unsigned.all;
 
-entity  mux4_1 IS
+entity  mux4to1 IS
    port (s0               : IN  STD_LOGIC;
          s1               : IN  STD_LOGIC;
          in0              : IN  STD_LOGIC;
@@ -15,9 +15,9 @@ entity  mux4_1 IS
          in3              : IN  STD_LOGIC;
          output           : OUT STD_LOGIC
         );
-END mux4_1;
+END mux4to1;
 
-ARCHITECTURE when_example OF mux4_1 IS
+ARCHITECTURE when_example OF mux4to1 IS
 
 -- =============================================================================
 BEGIN

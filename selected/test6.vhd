@@ -7,12 +7,12 @@ USE ieee.std_logic_1164.all;
 USE ieee.std_logic_unsigned.all;
 
 entity flip_flop is
-    port (d,clk  : in std_logic;
+    port (d,clk,rst  : in std_logic;
         q        : out std_logic
     );
 end;
 
 architecture behaviour of flip_flop is
 begin
-    FF: q <= d when rising_edge(clk); --assign only on clock's rising edge
+    FF: q <= '0' when rst = '1' else d when rising_edge(clk); --assign only on clock's rising edge
 end;
