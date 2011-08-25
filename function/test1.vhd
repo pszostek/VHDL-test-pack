@@ -8,13 +8,12 @@ USE ieee.std_logic_unsigned.all;
 USE ieee.numeric_std.all;
 
 
-use work.fun_pkg.all;
-    ENTITY  bin2gray IS
-    PORT (input               : IN  STD_LOGIC_VECTOR(7 downto 0);
-            strobe                 : IN STD_LOGIC;
-            output             : OUT STD_LOGIC_VECTOR(7 downto 0)
-            );
-    END bin2gray;
+ENTITY  bin2gray IS
+PORT (input               : IN  STD_LOGIC_VECTOR(7 downto 0);
+        strobe                 : IN STD_LOGIC;
+        output             : OUT STD_LOGIC_VECTOR(7 downto 0)
+        );
+END bin2gray;
 
 ARCHITECTURE function_example OF bin2gray  IS
     FUNCTION bin2gray(B1:std_logic_vector) return std_logic_vector is
@@ -27,7 +26,7 @@ ARCHITECTURE function_example OF bin2gray  IS
         return G1;
     end bin2gray; -- end function
 BEGIN 
-p1:PROCESS(strobe, input)
+p1:PROCESS(strobe)
     BEGIN
 
     if strobe='1' then

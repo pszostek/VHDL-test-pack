@@ -19,7 +19,7 @@ END bin2gray;
 
 ARCHITECTURE function_example OF bin2gray  IS
 BEGIN 
-    p1:PROCESS(strobe, input)
+    p1:PROCESS(strobe)
     BEGIN
         if strobe='1' then
             output <= bin2gray_fun(input);
