@@ -4,7 +4,7 @@
 
 `timescale 1ns/1ps
 
-module  reg_bank_vl (clk, d, q);
+module test_dff_v (clk, d, q);
 parameter g_count = 1;
 input [g_count-1:0] d;
 input clk;
@@ -79,8 +79,8 @@ module main;
     wire [15:0] d, o_verilog, o_vhdl;
 
     stimulus stim(d, clk);
-    test_dff #(16) reg_vhdl(clk,d,o_vhdl);
-    reg_bank_vl #(16)   reg_vl(clk,d,o_verilog);
+    test_dff #(16)   reg_vhdl(clk,d,o_vhdl);
+    test_dff_v #(16) reg_vl(clk,d,o_verilog);
     check check(o_verilog, o_vhdl);
     initial begin
         #120000;

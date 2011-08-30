@@ -6,7 +6,7 @@
 module main;
     wire [15:0] o1 [15:0];
     wire o;
-    dummy dummy_vhdl(o);
+    dummy dummy_vhdl(o1);
     
     initial begin
         $display("ERROR");
@@ -15,4 +15,3 @@ module main;
         $stop;
     end
 endmodule
- 

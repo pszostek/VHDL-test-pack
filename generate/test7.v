@@ -3,19 +3,21 @@
 // Date: 01.08.2011
 
 `timescale 1ns/1ps
-parameter N = 8;
-module adder_ripple_vl (input [N-1:0] a,b, input cin, output reg [N-1:0] sum, output reg cout);
-    wire [N:0] c;
+module xor_vector_v (a_i,b_i,c_o);
+    parameter N = 8;
+    input [N-1:0] a_i;
+    input [N-1:0] b_i;
+    output reg [N*N-1:0] c_o;
 
-    assign c[0] = cin;
     generate
         genvar i;
-        for(i=N-1; i>= 0; i=i-1) begin:ripple
-            assign c[i+1] = (a[i] & b[i]) | (a[i] & c[i]) | (b[i] & c[i]);
-            assign sum[i] = a[i] ^ b[i] ^ c[i];
+        genvar j;
+        for(i=N-1; i>= 0; i=i-1) begin:A
+            for(j=N-1; j>=0; j=j-1) begin:B
+                assign c_o[N*i+j] = a_i[i] ^ b_i[j];
+            end
         end
     endgenerate
-    assign cout = c[N];
 endmodule
 
 module stimulus (output reg [7:0] a, b);
@@ -62,16 +64,17 @@ module stimulus (output reg [7:0] a, b);
     endfunction
 endmodule
         
-module check(input [7:0] o_verilog, o_vhdl, input cout_verilog, cout_vhdl);
+module check(input o_verilog, o_vhdl);
+    parameter N = 8;
+    input [N*N-1:0] o_verilog;
+    input [N*N-1:0] o_vhdl;
 
 always @(o_verilog, o_vhdl) begin
     #1;
-    if (o_vhdl !== o_verilog || cout_verilog !== cout_vhdl) begin
+    if (o_vhdl !== o_verilog) begin
         $display("ERROR!");
-        $display("VHDL_OUTPUT: ", o_vhdl);
-        $display("VHDL_COUT: ", cout_vhdl);
         $display("VERILOG_OUTPUT: ", o_verilog);
-        $display("VERILOG_COUT: ", cout_verilog);
+        $display("VHDL OUTPUT: ", o_vhdl);
         $display("");
        // $stop;
     end else begin
@@ -85,13 +88,13 @@ end
 endmodule
 
 module main;
-    wire [7:0] a,b, o_vhdl, o_verilog;
-    wire cout_vhdl, cout_verilog;
+    wire [7:0] a,b;
+    wire [63:0] o_vhdl, o_verilog;
 
     stimulus stim(a,b);
-    adder_ripple_vl ripple_vl(a,b, 1'b0, o_verilog, cout_verilog);
-    adder_ripple #(8) ripple_vhdl(a,b,1'b0, o_vhdl, cout_vhdl);
-    check check_o(o_verilog, o_vhdl, cout_verilog, cout_vhdl);
+    xor_vector_v #(8) x_verilog(a,b, o_verilog);
+    xor_vector #(8) x_vhdl(a,b, o_vhdl);
+    check #(8) rheck_o(o_verilog, o_vhdl);
     initial begin
         #120000;
         $display("PASSED");
